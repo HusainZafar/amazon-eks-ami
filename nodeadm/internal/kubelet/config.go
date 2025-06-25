@@ -301,6 +301,10 @@ func (ksc *kubeletConfig) withImageServiceEndpoint(cfg *api.NodeConfig) {
 func (k *kubelet) GenerateKubeletConfig(cfg *api.NodeConfig) (*kubeletConfig, error) {
 	kubeletConfig := defaultKubeletSubConfig()
 
+	if api.IsFeatureEnabled(api.FastContainerImagePull, cfg.Spec.FeatureGates) {
+		kubeletConfig.ImageServiceEndpoint = "unix:///run/soci-snapshotter-grpc/soci-snapshotter-grpc.sock"
+	}
+
 	if err := kubeletConfig.withFallbackClusterDns(&cfg.Spec.Cluster); err != nil {
 		return nil, err
 	}
