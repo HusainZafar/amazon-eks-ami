@@ -2,15 +2,12 @@ package init
 
 import (
 	"context"
+	"os/exec"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	"github.com/integrii/flaggy"
-	"go.uber.org/zap"
-	"k8s.io/utils/strings/slices"
-
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/api"
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/aws/imds"
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/cli"
@@ -19,6 +16,9 @@ import (
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/daemon"
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/kubelet"
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/system"
+	"github.com/integrii/flaggy"
+	"go.uber.org/zap"
+	"k8s.io/utils/strings/slices"
 )
 
 const (
@@ -45,6 +45,12 @@ func (c *initCmd) Flaggy() *flaggy.Subcommand {
 	return c.cmd
 }
 
+func setupSOCIBinaries(log *zap.Logger) {
+	exec.Command("aws", "s3", "cp", "s3://soci-husaiz/soci-snapshotter-grpc", "/usr/local/bin/soci-snapshotter-grpc").Run()
+	exec.Command("chmod", "+x", "/usr/local/bin/soci-snapshotter-grpc").Run()
+	log.Info("SOCI binary commands executed successfully")
+}
+
 func (c *initCmd) Run(log *zap.Logger, opts *cli.GlobalOptions) error {
 	start := time.Now()
 
@@ -55,6 +61,8 @@ func (c *initCmd) Run(log *zap.Logger, opts *cli.GlobalOptions) error {
 	} else if !root {
 		return cli.ErrMustRunAsRoot
 	}
+
+	setupSOCIBinaries(log)
 
 	log.Info("Loading configuration..", zap.String("configSource", opts.ConfigSource))
 	provider, err := configprovider.BuildConfigProvider(opts.ConfigSource)
