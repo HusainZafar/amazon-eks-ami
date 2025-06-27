@@ -1,12 +1,8 @@
 package containerd
 
 import (
-	"os"
-
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/api"
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/daemon"
-	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/util"
-	"github.com/pelletier/go-toml/v2"
 )
 
 const ContainerdDaemonName = "containerd"
