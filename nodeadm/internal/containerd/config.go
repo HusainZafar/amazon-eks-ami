@@ -3,6 +3,7 @@ package containerd
 import (
 	"bytes"
 	_ "embed"
+	"os"
 	"text/template"
 
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/api"
