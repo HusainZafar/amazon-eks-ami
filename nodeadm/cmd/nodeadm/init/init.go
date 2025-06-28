@@ -17,6 +17,7 @@ import (
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/kubelet"
 	"github.com/awslabs/amazon-eks-ami/nodeadm/internal/system"
 	"github.com/integrii/flaggy"
+
 	"go.uber.org/zap"
 	"k8s.io/utils/strings/slices"
 )
